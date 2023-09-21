@@ -1,0 +1,223 @@
+<?php
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "option_d";
+$conn = mysqli_connect($servername,$username,$password,$database);
+
+if(!$conn){
+    die("Sorry we failed to connect:".mysqli_connect_error());
+}
+
+
+
+
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.2/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script src="https://cdn.datatables.net/1.13.2/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.2/js/dataTables.bootstrap4.min.js"></script>
+    <title>Option chain data</title>
+    <script src="myscript.js"></script>
+    
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <form action="" method="GET">
+                    <div class="card shadow mt-3">
+                        <div class="card-header">
+                            <h4>Filter
+                                <button type="submit" class="btn btn-dark btn-sm float-end">Search</button>
+                            </h4>
+                        </div>
+                        <div class="card-body">
+                            <h6>Expiry Dates</h6>
+                            <hr>
+                            <?php
+                                $expiry_query = "SELECT * FROM expiry_date ";
+                                $expiry_query_run = mysqli_query($conn,$expiry_query);
+                                if(mysqli_num_rows($expiry_query_run) > 0)
+                                {
+                                    foreach($expiry_query_run as $expirylist)
+                                    {
+                                        $checked=[];
+                                        if(isset($_GET['expirys']))
+                                        {
+                                            $checked=$_GET['expirys'];
+                                        }
+                                        
+                                        ?>
+                                            <span class="space">
+                                                <input type="checkbox" name="expirys[]" value="<?= $expirylist['expiry'];  ?>"
+                                                    <?php if(in_array($expirylist['expiry'],$checked)){ echo "checked";}?> 
+                                                />
+                                                <?php echo $expirylist['expiry']; ?>
+                                                &ensp;
+                                            </span>
+                                        <?php
+                                    }
+                                }
+                                else
+                                {
+                                    echo "No Expiry Dates Found";
+                                }
+                            ?>
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid mt-5 ">
+                  
+        <table id="optiontable" class = "table table-striped table-bordered" style="width:100%">
+            <thead>
+                <tr>
+                    <th>Expiry</th>
+                    <th>Sr No</th>
+                    <th>C OI</th>
+                    <th>C Chng OI</th>
+                    <th>C Volume</th>
+                    <th>C IV</th>
+                    <th>C LTP</th>
+                    <th>C Chng</th>
+                    <th>C Bid Qty</th>
+                    <th>C Bid</th>
+                    <th>C Ask</th>
+                    <th>C Ask Qty</th>
+                    <th>Strike</th>
+                    <th>P Bid Qty</th>
+                    <th>P Bid</th>
+                    <th>P Ask</th>
+                    <th>P Ask Qty</th>
+                    <th>P Chng</th>
+                    <th>P LTP</th>
+                    <th>P IV</th>
+                    <th>P Volume</th>
+                    <th>P Chng OI</th>
+                    <th>P OI</th>
+                    <th>Current</th>
+                </tr>
+            </thead>
+            <tbody>
+            
+            <?php
+                if(isset($_GET['expirys']))
+                {
+                    $expirycheck = [];
+                    $expirycheck = $_GET['expirys'];
+                    foreach($expirycheck as $expiryrow)
+                    {
+                        echo $expiryrow;
+                        echo "&ensp;";
+                        $sql = "SELECT * FROM opt WHERE expiry = '$expiryrow' ";
+                        $result_expiry = mysqli_query($conn,$sql);
+                        if(mysqli_num_rows($result_expiry) > 0)
+                        {
+                            foreach($result_expiry as $row):
+                                ?>
+                                
+                                    <tr>
+                                        <td><?php echo $row['expiry'];?></td>
+                                        <td><?php echo $row['sequence'];?></td>
+                                        <td><?php echo $row['c_OI'];?></td>
+                                        <td><?php echo $row['c_chng_OI'];?></td>
+                                        <td><?php echo $row['c_volume'];?></td>
+                                        <td><?php echo $row['c_iv'];?></td>
+                                        <td><?php echo $row['c_ltp'];?></td>
+                                        <td><?php echo $row['c_chng'];?></td>
+                                        <td><?php echo $row['c_bid_Qty'];?></td>
+                                        <td><?php echo $row['c_bid'];?></td>
+                                        <td><?php echo $row['c_ask'];?></td>
+                                        <td><?php echo $row['c_ask_Qty'];?></td>
+                                        <td><?php echo $row['strike'];?></td>
+                                        <td><?php echo $row['p_bid_Qty'];?></td>
+                                        <td><?php echo $row['p_bid'];?></td>
+                                        <td><?php echo $row['p_ask'];?></td>
+                                        <td><?php echo $row['p_ask_Qty'];?></td>
+                                        <td><?php echo $row['p_chng'];?></td>
+                                        <td><?php echo $row['p_ltp'];?></td>
+                                        <td><?php echo $row['p_iv'];?></td>
+                                        <td><?php echo $row['p_volume'];?></td>
+                                        <td><?php echo $row['p_chng_OI'];?></td>
+                                        <td><?php echo $row['p-OI'];?></td>
+                                        <td><?php echo $row['current'];?></td>
+                                    </tr>
+                                
+                                
+                                <?php
+                            endforeach;
+                        }
+                        else
+                        {
+                            echo "No Expiry Dates Found";
+                        }
+                    }
+
+
+                }
+                else
+                {
+                    $sql = "SELECT * FROM opt";
+                    $result = mysqli_query($conn,$sql);
+                    if(mysqli_num_rows($result) > 0)
+                    {
+                        foreach($result as $row):
+                            ?>
+                            
+                                <tr>
+                                    <td><?php echo $row['expiry'];?></td>
+                                    <td><?php echo $row['sequence'];?></td>
+                                    <td><?php echo $row['c_OI'];?></td>
+                                    <td><?php echo $row['c_chng_OI'];?></td>
+                                    <td><?php echo $row['c_volume'];?></td>
+                                    <td><?php echo $row['c_iv'];?></td>
+                                    <td><?php echo $row['c_ltp'];?></td>
+                                    <td><?php echo $row['c_chng'];?></td>
+                                    <td><?php echo $row['c_bid_Qty'];?></td>
+                                    <td><?php echo $row['c_bid'];?></td>
+                                    <td><?php echo $row['c_ask'];?></td>
+                                    <td><?php echo $row['c_ask_Qty'];?></td>
+                                    <td><?php echo $row['strike'];?></td>
+                                    <td><?php echo $row['p_bid_Qty'];?></td>
+                                    <td><?php echo $row['p_bid'];?></td>
+                                    <td><?php echo $row['p_ask'];?></td>
+                                    <td><?php echo $row['p_ask_Qty'];?></td>
+                                    <td><?php echo $row['p_chng'];?></td>
+                                    <td><?php echo $row['p_ltp'];?></td>
+                                    <td><?php echo $row['p_iv'];?></td>
+                                    <td><?php echo $row['p_volume'];?></td>
+                                    <td><?php echo $row['p_chng_OI'];?></td>
+                                    <td><?php echo $row['p-OI'];?></td>
+                                    <td><?php echo $row['current'];?></td>
+                                </tr>
+                            
+                            
+                            <?php
+                        endforeach;
+                    }
+                    else
+                    {
+                        echo "No Expiry Dates Found";
+                    }
+                }
+            ?>
+            </tbody>
+        </table>
+        
+                    
+    </div>
+</body>
+    
+</html>

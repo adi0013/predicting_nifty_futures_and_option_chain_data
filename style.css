@@ -1,0 +1,8 @@
+#optiontable {
+    width: auto !important;
+    font-size: small;
+}
+div.dataTables_wrapper {
+    width: 800px;
+    margin: 0 auto;
+}
